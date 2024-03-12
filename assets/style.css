@@ -1,0 +1,60 @@
+/* Existing styles */
+
+/* Collapsible sidebar styles */
+.sidebar.collapsed {
+    width: 80px; /* Smaller width when collapsed */
+}
+
+.content.expanded {
+    margin-left: 80px; /* Adjust to match the collapsed sidebar width */
+}
+
+.toggle-button {
+    /* Style your toggle button */
+    cursor: pointer;
+    /* Add more styling as needed */
+}
+
+.frame {
+    border: 2px solid #007BFF;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 2px 2px 2px lightgrey;
+}
+
+/* Adjust styles as needed for different components */
+.frame-dropdown {
+    width: 50%;
+    padding: 10px;
+}
+
+.data-box {
+    border: 2px solid #007BFF;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px auto; /* Centers the box */
+    box-shadow: 2px 2px 2px lightgrey;
+    width: 80%; /* Adjusts the width of the box */
+    background-color: #f9f9f9; /* Light background color for the box */
+}
+
+.dropdown-margin {
+    margin-bottom: 10px; /* Adds space between the dropdown and the figure */
+}
+
+.side-box {
+    border: 2px solid #f9f9f9; 
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px auto; /* Centers the box */
+    box-shadow: 2px 2px 2px lightgrey;
+    width: 80%; /* Adjusts the width of the box */
+    background-color: #023ADE; /* Light background color for the box */
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: #ff4b4b; /* Highlight color on hover and when active */
+    color: white !important; /* Ensure text color is white */
+    border-radius: 5px; /* Optional: add rounded corners */
+}
