@@ -6,15 +6,22 @@ import pandas as pd
 # Example DataFrame for demonstration purposes
 qa_data = pd.read_csv('data/phantom_qa_data.csv')
 sites = qa_data['Site'].unique()
-metrics = ['Scanner Frequency', 'Temperature', 'SNR', 'T1w', 'T2w', 'FSIP']  # Assuming these are the metrics
+metrics = ['Scanner Frequency', 'Temperature', 'Timestamp', 'SNR', 'T2w contrast ratio', 'Geometric Distortion AP', 'Geometric Distortion SI', 'Geometric Distortion LR']  # Assuming these are the metrics
 
 # QA Page layout
 layout = html.Div([
+    html.Div([
     html.H3('QA Analysis'),
-    dcc.Dropdown(id='qa-site-dropdown', options=[{'label': site, 'value': site} for site in qa_data['Site'].unique()], value='Site 1'),
-    dcc.Dropdown(id='metric-dropdown', options=[{'label': metric, 'value': metric} for metric in metrics], value=metrics[0]),
     dcc.Graph(id='qa-time-series-graph'),
+    html.B('Select a site:'),
+    dcc.Dropdown(id='qa-site-dropdown', options=[{'label': site, 'value': site} for site in qa_data['Site'].unique()], value='Site 1'),
+    html.B('Select a metric:'),
+    dcc.Dropdown(id='metric-dropdown', options=[{'label': metric, 'value': metric} for metric in metrics], value=metrics[0]),
+    ], className='data-box'),
+
+    html.Div([
     dcc.Graph(id='qa-boxplot-graph')
+    ], className='data-box')
 
 ])
 
@@ -31,7 +38,7 @@ def register_callbacks(app):
         filtered_data = qa_data[qa_data['Site'] == selected_site]
 
         # Generate time series figure
-        time_series_fig = px.line(filtered_data, x='Timestamp', y=selected_metric,
+        time_series_fig = px.line(filtered_data, x='Date', y=selected_metric,
                                   title=f'{selected_metric} Over Time for {selected_site}')
         
         # Generate boxplot figure
