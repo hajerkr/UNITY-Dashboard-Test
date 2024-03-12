@@ -15,6 +15,9 @@ external_stylesheets = [
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
 
+# Declare the server for deployment
+server = app.server
+
 content = html.Div(id="page-content", className="content")
 
 # Sidebar with navigation links and icons
@@ -88,4 +91,4 @@ stats_page.register_callbacks(app)
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8050)
