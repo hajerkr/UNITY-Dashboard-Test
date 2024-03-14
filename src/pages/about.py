@@ -21,5 +21,4 @@ layout = html.Div([
         If you have any questions or feedback, please contact [niall.bourke@kcl.ac.uk].
     """)
 ])
-# The `layout` variable is a `html.Div` that contains a series of `html.H2` and `html.P` components. The `html.H2` components define section headings, while the `html.P` components define paragraphs of text. The text is written in Markdown format, which is a simple way to write formatted text using plain text. The `html.P` components contain multi-line strings that use triple quotes (`"""`) to define the text content. This format allows you to write multi-line strings without having to use explicit line breaks or concatenation.
 

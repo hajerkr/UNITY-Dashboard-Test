@@ -1,6 +1,7 @@
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
 import pages.qa as qa_page
 import pages.about as about_page
 import pages.home as home_page
@@ -13,11 +14,13 @@ external_stylesheets = [
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css'  # Font Awesome
 ]
 
+# Create the Dash app
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
 
 # Declare the server for deployment
 server = app.server
 
+# Content area
 content = html.Div(id="page-content", className="content")
 
 # Sidebar with navigation links and icons
@@ -67,9 +70,9 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     sidebar,
     html.Div(id='page-content', style={'margin-left': '20%'}),
- 
 ])
 
+# Callback to update page content based on URL
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
@@ -85,10 +88,11 @@ def display_page(pathname):
     else:
         return home_page.layout
 
+# Register callbacks for each page
 qa_page.register_callbacks(app)
 vis_page.register_callbacks(app)
 stats_page.register_callbacks(app)
 
-
+# Run the app
 if __name__ == '__main__':
     app.run_server(debug=True, port=8050)

@@ -9,7 +9,6 @@ from dash import html, dcc
 import statsmodels.api as sm
 import plotly.graph_objects as go
 
-
 # Load the synthetic data
 def load_data():
     return pd.read_csv("data/participant_results_data.csv")
@@ -17,9 +16,8 @@ def load_data():
 df = load_data()
 unique_sites = df['site'].unique()
 categorical_vars = ['sex', 'group']
-continuous_vars = ['age', 'weight']
+continuous_vars = ['age', 'GSED']
 y_axis_options = [col for col in df.columns if col not in ['subjectID', 'sessionID', 'site', 'sex']]
-
 
 # Create the layout for the stats page
 layout = html.Div([
@@ -58,18 +56,20 @@ def register_callbacks(app):
         Output('boxplot-graph', 'figure'),
         [Input('selected-site', 'value'),
         Input('selected-cat-var', 'value'),
+        Input('selected-cont-var', 'value'),
         Input('selected-group-var', 'value'),
         Input('jitter-toggle', 'value')] 
     )
-    def update_boxplot(selected_site, selected_cat_var, selected_group_var, jitter_value):
+
+    def update_boxplot(selected_site, selected_cat_var, selected_cont_var, selected_group_var, jitter_value):
         filtered_df = df[df['site'] == selected_site] if selected_site != 'All' else df
         jitter = 'all' if 'jitter' in jitter_value else False
 
         if selected_group_var == "none":
-            boxplot_fig = px.box(filtered_df, x=selected_cat_var, y='age', points=jitter, title='Age Distribution by Category')  # Adjust based on your needs
+            boxplot_fig = px.box(filtered_df, x=selected_cat_var, y=selected_cont_var, points=jitter, title=f'{selected_cont_var} by {selected_cat_var}')  # Adjust based on your needs
             return boxplot_fig
         else:
-            boxplot_fig = px.box(filtered_df, x=selected_cat_var, y='age', points=jitter, color=selected_group_var, title='Age Distribution by Category')  # Adjust based on your needs
+            boxplot_fig = px.box(filtered_df, x=selected_cat_var, y=selected_cont_var, points=jitter, color=selected_group_var, title=f'{selected_cont_var} by {selected_cat_var}')  # Adjust based on your needs
             return boxplot_fig
           
     # callback for updating the scatter plot
@@ -80,8 +80,6 @@ def register_callbacks(app):
     )
 
     def update_scatter(selected_y_axis, model_options):
-        # print(model_options)
-        # print(df['age'].dtype, df[selected_y_axis].dtype)
         trendline = model_options if model_options in ['ols', 'lowess', 'expanding'] else None
         scatter_fig = px.scatter(df, x='age', y=selected_y_axis, trendline=trendline, title=f'{selected_y_axis} vs. Age')
         return scatter_fig

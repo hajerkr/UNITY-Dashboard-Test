@@ -57,10 +57,10 @@ for i in range(n_participants):
         gm_vol[i] *= factor
         csf_vol[i] *= factor
     if sex[i] == 'Female':
-        ticv[i] *= 0.97
-        wm_vol[i] *= 0.97
-        gm_vol[i] *= 0.97
-        csf_vol[i] *= 0.97
+        ticv[i] *= 0.95
+        wm_vol[i] *= 0.95
+        gm_vol[i] *= 0.95
+        csf_vol[i] *= 0.95
 
 participant_results_data = pd.DataFrame({
     'Subject ID': np.repeat(participant_ids, 2),
