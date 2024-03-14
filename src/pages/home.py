@@ -11,6 +11,20 @@ layout = html.Div([
         comprehensive overview of the data quality across different sites.
            """
     ),
+    
+    html.H3("GitHub Repository"),
+    html.P("""
+        The source code for this app is available on GitHub
+    """),
+    html.A("GitHub Repository", href="https://github.com/Nialljb/MR", target="_blank"),
+
+    html.H3("UNITY Project Website"),
+    html.P("""
+        More information about the UNITY project can be found on the project website.
+        
+    """),
+
+    html.A("UNITY Project Website", href="https://www.unity-mri.com/"),
 
     html.H3("Disclaimer"),
     html.P("""
