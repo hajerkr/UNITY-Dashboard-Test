@@ -31,6 +31,18 @@ layout = html.Div([
         Loaded data is synthetic and does not represent real scanner data.
         No warranty is provided for the accuracy of the results.
         The data is generated for educational purposes only.
+    """),
+
+    html.H3("Notes:"),
+    html.P("""
+        - Functionality can be developed as desired.
+        - If implementing on a real aggregated dataset, ensure that the data is anonymized.
+        - Will also need to ensure that the data is compliant with the relevant data protection laws.
+        - If users need to be authenticated, then the app will need to be hosted in a secure environment.
+           
+        - Could include a project page with summaries of complete data.  
+           
     """)
+
 ])
 
