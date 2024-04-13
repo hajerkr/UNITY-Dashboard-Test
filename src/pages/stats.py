@@ -22,15 +22,19 @@ unique_sites = df['site'].unique()
 # Create the layout for the stats page
 layout = html.Div([
     html.H3("Study Descriptive Statistics"),
+    html.Br(),
+    html.Label("Please select a site to filter the data:"),
     dcc.Dropdown(
         id='selected-site', 
         options=[{"label": "All", "value": "All"}] + [{"label": site, "value": site} for site in unique_sites], 
         value="All"),
+    html.Label("Please choose a variable to display descriptive statistics:"),
     dcc.Dropdown(
         id='variable-dropdown',
         options=[{'label': var, 'value': var} for var in df.columns if var not in ['subjectID', 'sessionID', 'site', 'sex', 'group', 'Timestamp']],
         value='age'  # Default selection
     ),
+    html.Br(),
     html.Div(id='stats-output'),  # Placeholder for stats
     html.A('Download CSV', id='download-link', href=''),
     
@@ -62,19 +66,13 @@ def register_callbacks(app):
         return stats_table
    
     def generate_csv(selected_site, selected_variable):
-        # Assuming df is your DataFrame
         filtered_data = df[df['site'] == selected_site] if selected_site != 'All' else df
         stats = filtered_data[selected_variable].describe().reset_index()
         stats.columns = ['Statistic', 'Value']
 
-        df = pd.DataFrame(stats)
-        # Define the CSV filename
+        output_df = pd.DataFrame(stats)
         csv_filename = 'my_data.csv'
-        csv_file_path = os.path.join('/assets/', csv_filename)  # Example path in 'assets' folder
+        csv_file_path = os.path.join('/assets/', csv_filename)
 
-        # Save the DataFrame to CSV
-        df.to_csv(csv_file_path, index=False)
-
-        # Return a link for downloading
-        download_link = html.A('Download Descriptive Statistics', href=f'/{csv_filename}', download=csv_filename)
-        return download_link
+        output_df.to_csv(csv_file_path, index=False)
+        return html.A('Download Descriptive Statistics', href=f'/{csv_filename}', download=csv_filename)
