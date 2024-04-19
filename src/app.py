@@ -7,6 +7,15 @@ import pages.about as about_page
 import pages.home as home_page
 import pages.vis as vis_page
 import pages.stats as stats_page
+from pages.stats import site_filter_sidebar  # Assume unique_sites is defined or accessible globally
+import pandas as pd
+
+# Load the synthetic data
+def load_data():
+    return pd.read_csv("data/participant_results_data.csv")
+
+df = load_data()
+unique_sites = df['site'].unique()
 
 # Include Font Awesome for icons
 external_stylesheets = [
@@ -16,7 +25,6 @@ external_stylesheets = [
 
 # Create the Dash app
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
-
 # Declare the server for deployment
 server = app.server
 
@@ -75,6 +83,7 @@ app.layout = html.Div([
 # Callback to update page content based on URL
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
+
 def display_page(pathname):
     if pathname == '/qa':
         return qa_page.layout
@@ -83,7 +92,7 @@ def display_page(pathname):
     if pathname == '/data-visualization':
         return vis_page.layout
     if pathname == '/data-analysis':
-        return stats_page.layout
+        return [site_filter_sidebar(unique_sites), stats_page.layout]
     # Add conditions for other pages...
     else:
         return home_page.layout

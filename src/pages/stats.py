@@ -19,15 +19,30 @@ def load_data():
 df = load_data()
 unique_sites = df['site'].unique()
 
+from dash import dcc, html
+
+def site_filter_sidebar(unique_sites):
+    """Returns a sidebar component for site filtering specific to the data analysis page."""
+    return html.Div([
+        html.H4("Site Filter", style={'color': 'white', 'marginTop': '20px'}),
+        dcc.Dropdown(
+            id='selected-site',
+            options=[{'label': "All", 'value': "All"}] + [{'label': site, 'value': site} for site in unique_sites],
+            value="All",
+            style={'color': 'black'}
+        )
+    ], style={'padding': '20px', 'background-color': '#001f3f'})
+
+
 # Create the layout for the stats page
 layout = html.Div([
     html.H3("Study Descriptive Statistics"),
-    html.Br(),
-    html.Label("Please select a site to filter the data:"),
-    dcc.Dropdown(
-        id='selected-site', 
-        options=[{"label": "All", "value": "All"}] + [{"label": site, "value": site} for site in unique_sites], 
-        value="All"),
+    # html.Br(),
+    # html.Label("Please select a site to filter the data:"),
+    # dcc.Dropdown(
+    #     id='selected-site', 
+    #     options=[{"label": "All", "value": "All"}] + [{"label": site, "value": site} for site in unique_sites], 
+    #     value="All"),
     html.Label("Please choose a variable to display descriptive statistics:"),
     dcc.Dropdown(
         id='variable-dropdown',
@@ -35,6 +50,7 @@ layout = html.Div([
         value='age'  # Default selection
     ),
     html.Br(),
+    html.P(id='dropdown-output'),    
     html.Div(id='stats-output'),  # Placeholder for stats
     html.A('Download CSV', id='download-link', href=''),
     
@@ -44,9 +60,11 @@ layout = html.Div([
 def register_callbacks(app):
     @app.callback(
         Output('stats-output', 'children'),
+        Output('dropdown-output', 'children'),
         [Input('selected-site', 'value'), 
          Input('variable-dropdown', 'value')]
     )
+
     def update_output(selected_site, selected_variable):
 
         # Filter data based on selection
@@ -63,8 +81,12 @@ def register_callbacks(app):
             style_cell={'textAlign': 'left'},
         )
 
-        return stats_table
+        # Generate descriptive text
+        descriptive_text = html.P(f"Descriptive statistics for the selected variable: {selected_variable} (site: {selected_site})")
+
+        return stats_table, descriptive_text
    
+ 
     def generate_csv(selected_site, selected_variable):
         filtered_data = df[df['site'] == selected_site] if selected_site != 'All' else df
         stats = filtered_data[selected_variable].describe().reset_index()

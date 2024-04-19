@@ -8,6 +8,7 @@ import numpy as np
 from dash import html, dcc
 import statsmodels.api as sm
 import plotly.graph_objects as go
+from dash.exceptions import PreventUpdate
 
 # Load the synthetic data
 def load_data():
@@ -83,4 +84,5 @@ def register_callbacks(app):
         trendline = model_options if model_options in ['ols', 'lowess', 'expanding'] else None
         scatter_fig = px.scatter(df, x='age', y=selected_y_axis, trendline=trendline, title=f'{selected_y_axis} vs. Age')
         return scatter_fig
+
 
