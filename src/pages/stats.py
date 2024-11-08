@@ -1,15 +1,10 @@
 # pages/stats.py
-import dash
-from dash.dependencies import Input, Output
-import plotly.express as px
+
+from dash.dependencies import Input, Output, State
 import pandas as pd
-from scipy.stats import pearsonr
-import numpy as np
 from dash import html, dcc, dash_table
-import statsmodels.api as sm
-import os
-import flask 
-from io import StringIO
+import io 
+import base64
 
 
 # Load the synthetic data
@@ -37,44 +32,43 @@ def site_filter_sidebar(unique_sites):
 # Create the layout for the stats page
 layout = html.Div([
     html.H3("Study Descriptive Statistics"),
-    # html.Br(),
-    # html.Label("Please select a site to filter the data:"),
-    # dcc.Dropdown(
-    #     id='selected-site', 
-    #     options=[{"label": "All", "value": "All"}] + [{"label": site, "value": site} for site in unique_sites], 
-    #     value="All"),
     html.Label("Please choose a variable to display descriptive statistics:"),
+    
     dcc.Dropdown(
         id='variable-dropdown',
         options=[{'label': var, 'value': var} for var in df.columns if var not in ['subjectID', 'sessionID', 'site', 'sex', 'group', 'Timestamp']],
         value='age'  # Default selection
     ),
     html.Br(),
-    html.P(id='dropdown-output'),    
-    html.Div(id='stats-output'),  # Placeholder for stats
-    html.A('Download CSV', id='download-link', href=''),
+    html.P(id='dropdown-output'),  # Placeholder for descriptive text
+
+    html.Div(id='stats-output'),  # Placeholder for stats table
+
+    # Button for triggering CSV download
+    html.Button("Download CSV", id="download-button", n_clicks=0),
     
+    # dcc.Download component to trigger the file download
+    dcc.Download(id="download-data"),
 ])
 
 # Callbacks registered in app.py that takes the app as an argument.
 def register_callbacks(app):
     @app.callback(
-        Output('stats-output', 'children'),
-        Output('dropdown-output', 'children'),
-        [Input('selected-site', 'value'), 
-         Input('variable-dropdown', 'value')]
+    Output('stats-output', 'children'),
+    Output('dropdown-output', 'children'),
+    Output('download-data', 'children'),
+    [Input('selected-site', 'value'), 
+     Input('variable-dropdown', 'value')]
     )
-
     def update_output(selected_site, selected_variable):
-
         # Filter data based on selection
         filtered_data = df[df['site'] == selected_site] if selected_site != 'All' else df
         
         # Calculate descriptive statistics
         stats = filtered_data[selected_variable].describe().reset_index()
         stats.columns = ['Statistic', 'Value']
-        # print(stats)
-        # Generate table and download link components
+        
+        # Generate table
         stats_table = dash_table.DataTable(
             data=stats.to_dict('records'),
             columns=[{'id': c, 'name': c} for c in stats.columns],
@@ -84,17 +78,60 @@ def register_callbacks(app):
         # Generate descriptive text
         descriptive_text = html.P(f"Descriptive statistics for the selected variable: {selected_variable} (site: {selected_site})")
 
-        return stats_table, descriptive_text
-   
- 
-    def generate_csv(selected_site, selected_variable):
-        filtered_data = df[df['site'] == selected_site] if selected_site != 'All' else df
-        stats = filtered_data[selected_variable].describe().reset_index()
-        stats.columns = ['Statistic', 'Value']
+        # Generate CSV link
+        csv_link = dcc.Link(
+            'Download CSV', 
+            href=f'/assets/{selected_variable}_data.csv', 
+            target='_blank'
+        )
 
-        output_df = pd.DataFrame(stats)
-        csv_filename = 'my_data.csv'
-        csv_file_path = os.path.join('/assets/', csv_filename)
+        return stats_table, descriptive_text, csv_link
 
-        output_df.to_csv(csv_file_path, index=False)
-        return html.A('Download Descriptive Statistics', href=f'/{csv_filename}', download=csv_filename)
+    # @app.callback(
+    #     Output('download-data', 'href'),
+    #     [Input('selected-site', 'value'), 
+    #     Input('variable-dropdown', 'value')]
+    # )
+    # def generate_csv(selected_site, selected_variable):
+    #     # Filter data based on selection
+    #     filtered_data = df[df['site'] == selected_site] if selected_site != 'All' else df
+    #     stats = filtered_data[selected_variable].describe().reset_index()
+    #     stats.columns = ['Statistic', 'Value']
+        
+    #     # Save to CSV
+    #     output_df = pd.DataFrame(stats)
+    #     csv_filename = f"{selected_variable}_data.csv"
+    #     csv_file_path = os.path.join(app.server.static_folder, csv_filename)
+
+    #     output_df.to_csv(csv_file_path, index=False)
+        
+    #     return f'/{csv_filename}'
+
+    @app.callback(
+    Output("download-data", "data"),
+    [Input("download-button", "n_clicks")],
+    [State('selected-site', 'value'), 
+     State('variable-dropdown', 'value')]
+    )
+    def generate_csv(n_clicks, selected_site, selected_variable):
+        if n_clicks > 0:
+            # Filter data based on selection
+            filtered_data = df[df['site'] == selected_site] if selected_site != 'All' else df
+            stats = filtered_data[selected_variable].describe().reset_index()
+            stats.columns = ['Statistic', 'Value']
+            
+            # Convert to CSV and encode as base64
+            output_df = pd.DataFrame(stats)
+            
+            # Save the DataFrame to a CSV in memory using a buffer
+            buffer = io.StringIO()
+            output_df.to_csv(buffer, index=False)
+            buffer.seek(0)
+            
+            # Convert the CSV content to base64 for downloading
+            csv_content = buffer.getvalue()
+            csv_base64 = base64.b64encode(csv_content.encode()).decode()
+
+            return dict(content=buffer.getvalue(), filename=f"{selected_variable}_data.csv")
+        
+        return None  # No download if the button hasn't been clicked yet
