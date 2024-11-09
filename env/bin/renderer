@@ -1,4 +1,4 @@
-#!/Users/nbourke/GD/atom/dashboarding/budget/env/bin/python3.10
+#!/Users/nbourke/GD/atom/dashboarding/MR/env/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
