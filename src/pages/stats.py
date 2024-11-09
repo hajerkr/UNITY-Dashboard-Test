@@ -56,7 +56,6 @@ def register_callbacks(app):
     @app.callback(
     Output('stats-output', 'children'),
     Output('dropdown-output', 'children'),
-    Output('download-data', 'children'),
     [Input('selected-site', 'value'), 
      Input('variable-dropdown', 'value')]
     )
@@ -78,14 +77,7 @@ def register_callbacks(app):
         # Generate descriptive text
         descriptive_text = html.P(f"Descriptive statistics for the selected variable: {selected_variable} (site: {selected_site})")
 
-        # Generate CSV link
-        csv_link = dcc.Link(
-            'Download CSV', 
-            href=f'/assets/{selected_variable}_data.csv', 
-            target='_blank'
-        )
-
-        return stats_table, descriptive_text, csv_link
+        return stats_table, descriptive_text
 
     # @app.callback(
     #     Output('download-data', 'href'),
