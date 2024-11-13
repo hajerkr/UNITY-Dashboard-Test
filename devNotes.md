@@ -11,3 +11,6 @@ Activate this project environment (make sure to deactivate any other running env
 Install packages for project
 >python3 -m pip install dash-tools
 
+> pip install -r requirements.txt
+
+

@@ -3,14 +3,12 @@ from dash import html
 # Define the layout for the About page
 layout = html.Div([
     html.H1("Welcome to the UNITY MRI Dashboard"),
-    html.P("""
-        This dashboard is designed to visualize MRI data across numerous sites, 
-        providing insights into derived volume estimates and QA MRI data analysis. 
-        The goal is to assist researchers
-        and clinicians in identifying potential issues with the data and to provide a 
-        comprehensive overview of the data quality across different sites.
-           """
-    ),
+    html.P([
+        "This dashboard is designed to visualize MRI data across numerous sites,", html.Br(),
+        "providing insights into derived volume estimates and QA MRI data analysis.", html.Br(),
+        "The goal is to assist researchers and clinicians in identifying potential issues with the data and to provide a ", html.Br(),
+        "comprehensive overview of the data quality across different sites."
+    ]),
     
     html.H3("GitHub Repository"),
     html.P("""
@@ -34,14 +32,13 @@ layout = html.Div([
     """),
 
     html.H3("Notes:"),
-    html.P("""
-        - Functionality can be developed as desired.  
-        - If implementing on a real aggregated dataset, ensure that the data is anonymized.  
-        - Will also need to ensure that the data is compliant with the relevant data protection laws.  
-        - If users need to be authenticated, then the app will need to be hosted in a secure environment.  
-        - Could include a project page with summaries of complete data.   
-           
-    """)
+    html.P([
+        "- Functionality can be developed as desired.", html.Br(),
+        "- If implementing on a real aggregated dataset, ensure that the data is anonymized.", html.Br(),
+        "- Will also need to ensure that the data is compliant with the relevant data protection laws.", html.Br(),
+        "- If users need to be authenticated, then the app will need to be hosted in a secure environment.", html.Br(),
+        "- Could include a project page with summaries of complete data."
+    ])
 
 ])
 
