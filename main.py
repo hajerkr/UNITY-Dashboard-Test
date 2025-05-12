@@ -10,6 +10,7 @@ from glob import glob
 import pydicom
 import zipfile
 import argparse
+import flywheel
 
 
 
