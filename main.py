@@ -29,6 +29,7 @@ print(f"Project: {fw_project.label}")
 
 subjects = fw_project.subjects()
 print(f"This project has {len(subjects)} subjects.")
+download_path = os.path.join(os.getcwd(), 'src','data', 'tmp')
 
 for subject in subjects:
     all_rows = []
@@ -55,11 +56,11 @@ for subject in subjects:
                 
                 fisp_f = [f for f in acquisition.files if f.name.endswith(".dcm") or f.name.endswith(".dicom") or f.name.endswith(".zip")][0]
                 
-                acquisition.download_file(fisp_f.name, os.path.join(os.getcwd(), 'tmp',fisp_f.name))
+                acquisition.download_file(fisp_f.name, os.path.join(download_path,fisp_f.name))
                 
                 if fisp_f.name.endswith('zip'):
-                    zip_path =  os.path.join(os.getcwd(), 'tmp',fisp_f.name)
-                    extract_dir = os.path.join(os.getcwd(), 'tmp')
+                    zip_path =  os.path.join(download_path,fisp_f.name)
+                    extract_dir = download_path
                     
                     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                         zip_ref.extractall(extract_dir)
@@ -67,7 +68,7 @@ for subject in subjects:
                         for root, _, files in os.walk(extract_dir):
                             for file in files:
                                 if file.lower().endswith(".dcm"):
-                                    dcm_path = os.path.join(os.getcwd(), 'tmp', root, file)
+                                    dcm_path = os.path.join(download_path, root, file)
                                     ds = pydicom.dcmread(dcm_path)
                                     temperature = ds.get("PatientComments", None)
                                     temp_d = re.findall(r'\d+', temperature)  
@@ -76,7 +77,7 @@ for subject in subjects:
                                     
                 
                 else:
-                    ds = pydicom.dcmread(os.path.join(os.getcwd(), 'tmp', fisp_f.name))
+                    ds = pydicom.dcmread(os.path.join(download_path, fisp_f.name))
                     temperature = ds.get("PatientComments", None)
                     temp_d = re.findall(r'\d+', temperature)                 
                     #print("Temperature: ", temp_d)
@@ -96,7 +97,7 @@ for subject in subjects:
                 if csv_files:
                     try:
                         file = csv_files[0]
-                        path = os.path.join(os.getcwd(),  'src','data', 'tmp', f'{subject.label}_{session.label}_{file.name}')
+                        path = os.path.join(download_path, f'{subject.label}_{session.label}_{file.name}')
                         asys.download_file(file.name, path)
                         
                         df = pd.read_csv(path)
@@ -122,17 +123,17 @@ for subject in subjects:
         df = pd.DataFrame.from_dict(all_rows)
         df = df.drop(df[df['PSNR'] == np.inf].index).reset_index()
         df['Temperature'] = df['Temperature'].apply(lambda v: v[0] if v else None)
-        df[['Site','Session','MSE', 'PSNR', 'NMI', 'SSIM','SoftwareVersion','Temperature']].to_csv(os.path.join(os.getcwd(),  'src','data', f'PSNR_{subject.label}.csv'),index=False)
+        df[['Site','Session','MSE', 'PSNR', 'NMI', 'SSIM','SoftwareVersion','Temperature']].to_csv(os.path.join(download_path, f'PSNR_{subject.label}.csv'),index=False)
         
 
 
 # List to hold each DataFrame
 dfs = []
-directory = os.path.join(os.getcwd(), 'src','data')
+directory = download_path
 # Loop through each file in the directory
 for filename in os.listdir(directory) :
     if filename.endswith(".csv"):
-        filepath = os.path.join(directory, filename)
+        filepath = os.path.join(download_path, filename)
         df = pd.read_csv(filepath)
         dfs.append(df)
 
@@ -140,4 +141,4 @@ for filename in os.listdir(directory) :
 combined_df = pd.concat(dfs, ignore_index=True)
 
 print(combined_df)
-combined_df.to_csv(os.path.join(os.getcwd(),  'src','data', "all_phantoms.csv"),index=False)
+combined_df.to_csv(os.path.join(os.getcwd(),'src','data', "all_phantoms.csv"),index=False)
