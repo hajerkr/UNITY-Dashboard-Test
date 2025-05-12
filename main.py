@@ -24,7 +24,7 @@ fw = flywheel.Client(api_key=api_key)
 print(f"User: {fw.get_current_user().firstname} {fw.get_current_user().lastname}")
 
 fw_project = fw.projects.find_first('label=UNITY-QA')
-project = project.reload()
+fw_project = fw_project.reload()
 print(f"Project: {project.label}")
 
 subjects = fw_project.subjects()
