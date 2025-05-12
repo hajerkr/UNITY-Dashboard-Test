@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      FW_API_KEY: ${{ secrets.FW_CLI_API_KEY }}
+      FW_CLI_API_KEY: ${{ secrets.FW_CLI_API_KEY }}
 
     steps:
       - name: Checkout repository
