@@ -14,10 +14,10 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='Update the CSV file with the latest data from the Flywheel UNITY QA project.')
-parser.add_argument('--api-key','-api-key',type=str,nargs='?',help='FW CLI API key')
+parser.add_argument('--apikey','-apikey',type=str,nargs='?',help='FW CLI API key')
 
 args = parser.parse_args()
-api_key = args.api-key
+api_key = args.apikey
 
 fw = flywheel.Client(api_key=api_key)
 display(f"User: {fw.get_current_user().firstname} {fw.get_current_user().lastname}")
