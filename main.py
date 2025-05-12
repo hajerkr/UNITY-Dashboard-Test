@@ -25,7 +25,7 @@ print(f"User: {fw.get_current_user().firstname} {fw.get_current_user().lastname}
 
 fw_project = fw.projects.find_first('label=UNITY-QA')
 fw_project = fw_project.reload()
-print(f"Project: {project.label}")
+print(f"Project: {fw_project.label}")
 
 subjects = fw_project.subjects()
 print(f"This project has {len(subjects)} subjects.")
