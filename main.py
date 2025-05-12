@@ -21,11 +21,11 @@ args = parser.parse_args()
 api_key = args.apikey
 
 fw = flywheel.Client(api_key=api_key)
-display(f"User: {fw.get_current_user().firstname} {fw.get_current_user().lastname}")
+print(f"User: {fw.get_current_user().firstname} {fw.get_current_user().lastname}")
 
 fw_project = fw.projects.find_first('label=UNITY-QA')
 project = project.reload()
-display(f"Project: {project.label}")
+print(f"Project: {project.label}")
 
 subjects = fw_project.subjects()
 print(f"This project has {len(subjects)} subjects.")
@@ -139,5 +139,5 @@ for filename in os.listdir(directory) :
 # Concatenate all DataFrames into one
 combined_df = pd.concat(dfs, ignore_index=True)
 
-display(combined_df)
+print(combined_df)
 combined_df.to_csv(os.path.join(os.getcwd(),  'src','data', "all_phantoms.csv"),index=False)
