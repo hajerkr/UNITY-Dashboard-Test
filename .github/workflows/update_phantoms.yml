@@ -28,13 +28,13 @@ jobs:
 
       - name: Run the script
         run: |
-          mkdir -p Final tmp
-          python your_script.py -api-key $FW_CLI_API_KEY
+          mkdir -p src/data/tmp
+          python main.py -api-key $FW_CLI_API_KEY
 
       - name: Commit and push updated CSV
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add Final/all_phantoms.csv
+          git add src/data/all_phantoms.csv
           git commit -m "Update all_phantoms.csv [automated]" || echo "No changes to commit"
           git push
